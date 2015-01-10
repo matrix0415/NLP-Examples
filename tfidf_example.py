@@ -13,8 +13,8 @@ corpus =["good good good great great clean clean",
          "bad bad bad clean"
 ]
 
-vec =tfidf(use_idf =True)
-trans =vec.fit_transform(corpus)
+vec =tfidf(use_idf =True)           # further settings on the website.
+trans =vec.fit_transform(corpus)    # calculating.
 
 feature =vec.get_feature_names()    # return type "List", full with words.
 idf =vec.idf_                       # return type "Array", full with idf values.
