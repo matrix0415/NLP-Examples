@@ -19,7 +19,7 @@ trainset =["good good good good good great great great",    # corpus 1
 ]
 trainTag =["pos", "neg"]                                    # corpus's tags.
 
-# testing set, "List" type.
+# test set, "List" type.
 testset =["good good good good good great great great",
         "good good good good good great great great bad",
         "good good good good good great great great bad bad",
@@ -42,13 +42,15 @@ testTag =["pos", "pos", "pos", "pos", "pos", "pos", "pos",
 
 # training set is converting to the tfidf array.
 trainRs =vec.fit_transform(trainset).toarray()
-# testing set is converting to the tfidf array.
+# test set is converting to the tfidf array.
 testRs =vec.fit_transform(testset).toarray()
 
-# the tfidf array result of training & testing set.
+# the tfidf array result of training & test set.
+print("Training set tfidf result.")
 print(trainRs.shape)
 print(trainRs)
-print("--------------------")
+print("----------------------------------------")
+print("Test set tfidf result.")
 print(testRs.shape)
 print(testRs)
 
@@ -56,11 +58,48 @@ print(testRs)
 svc.fit(trainRs, trainTag)  # further settings on website: http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
 
 # accuracy of the model.
-print("--------------------")
+print("----------------------------------------")
 accuracy =svc.score(testRs, testTag)
+print("SVM model accuracy:")
 print(accuracy)
 
 # predicting test set result.
-print("--------------------")
+print("----------------------------------------")
 predict =svc.predict(testRs)
+print("SVM model predict result:")
 print(predict)
+
+
+'''
+Console Print:::
+
+Training set tfidf result.
+(2, 4)
+[[ 0.          0.          0.85749293  0.51449576]
+ [ 0.89442719  0.4472136   0.          0.        ]]
+----------------------------------------
+Test set tfidf result.
+(14, 4)
+[[ 0.          0.          0.85749293  0.51449576]
+ [ 0.16903085  0.          0.84515425  0.50709255]
+ [ 0.32444284  0.          0.81110711  0.48666426]
+ [ 0.45749571  0.          0.76249285  0.45749571]
+ [ 0.          0.16903085  0.84515425  0.50709255]
+ [ 0.          0.32444284  0.81110711  0.48666426]
+ [ 0.          0.45749571  0.76249285  0.45749571]
+ [ 0.89442719  0.4472136   0.          0.        ]
+ [ 0.88465174  0.44232587  0.14744196  0.        ]
+ [ 0.85714286  0.42857143  0.28571429  0.        ]
+ [ 0.81649658  0.40824829  0.40824829  0.        ]
+ [ 0.88465174  0.44232587  0.          0.14744196]
+ [ 0.85714286  0.42857143  0.          0.28571429]
+ [ 0.81649658  0.40824829  0.          0.40824829]]
+----------------------------------------
+SVM model accuracy:
+1.0
+----------------------------------------
+SVM model predict result:
+['pos' 'pos' 'pos' 'pos' 'pos' 'pos' 'pos' 'neg' 'neg' 'neg' 'neg' 'neg'
+ 'neg' 'neg']
+
+'''
