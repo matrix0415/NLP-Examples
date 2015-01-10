@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Matrix'
+# 2015/01/11
 # Script passed in py2 & py3 with Ubuntu 14.04 env.
 # Prerequirement: pip install numpy scipy scikit-learn
 # furthermore http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html.
