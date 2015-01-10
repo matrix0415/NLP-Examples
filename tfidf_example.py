@@ -17,7 +17,7 @@ vec =tfidf(use_idf =True)
 trans =vec.fit_transform(corpus)
 
 feature =vec.get_feature_names()    # return type "List", full with words.
-idf =vec.idf_
+idf =vec.idf_                       # return type "Array", full with idf values.
 result =trans.toarray()             # return type "Array"
 
 print(feature)
