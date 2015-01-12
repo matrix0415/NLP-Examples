@@ -1,5 +1,5 @@
 # -*- coding: utf-8-*-
-from errorlogLib import writeLogL
+from libs.errorlogLib import writeLogL
 
 def fetchUrl(fakeUrl):
 	import re
