@@ -6,10 +6,10 @@ __author__ = 'Matrix'
 
 from libs.nlpLib import nltkL
 
-doc ="We are named as the best company in the world. Products we made with a great quality feature that people like to buy."
-
 nltk =nltkL("venv/nltk_data")       # folder "nltk_data" location, empty to use the default path
 
-result =nltk.lemma(doc)
+doc ="We are named as the best company in the world. Products we made with a great quality feature that people like to buy."
+
+result =nltk.englishCorpusLemma(doc)
 
 print(result)
