@@ -178,11 +178,13 @@ class nltkL(object):
 				rs[0] =True
 
 		elif pyver ==3:
-			temp =self.englishCorpusChecker(
+			checkerRs =self.englishCorpusChecker(
 				corpus, accuracy, kwargs['corpusMinimumWords'], kwargs['preCheck'], kwargs['preAccuracy']
 			)
-			rs.append(temp[1])
-			rs[0] =True
+
+			if checkerRs[0]:
+				rs.append(checkerRs[1])
+				rs[0] =True
 
 		return rs
 
