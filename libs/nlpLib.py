@@ -199,7 +199,7 @@ class nltkL(object):
 			if tag =="v" or tag =="n":
 				try:
 					l =lemma()
-					rs =l.lemmatize(string, pos=tag)
+					rs =l.lemmatize(string.lower(), pos=tag)
 
 				except UnicodeError:
 					rs =""
