@@ -340,7 +340,7 @@ class sentimentScoreLib(object):
 
 
 
-	# senticnet -->fetchScore(token, tags)
+	# senticnet -->fetchScore(token, tag)
 	# sentiwordnet -->fetchScore(token, pos, hierarchy, scoreType)
 	def fetchScore(self, token, **kwargs):
 		rs =[False,]
@@ -384,7 +384,25 @@ class sentimentScoreLib(object):
 		return rs
 
 
-	def corpusWordsSentiment(self, corpus):
+	# senticnet -->fetchScore(token, tags)
+	# sentiwordnet -->fetchScore(token, pos, hierarchy, scoreType)
+	def corpusWordsSentiment(self, corpus ="", scoreType =""):
+		rs =[False]
+
 		n =self.nltk
-		token =n.string2ngram(corpus, 1)+n.string2ngram(corpus, 2)+n.string2ngram(corpus, 3)
-	
+		tokens =n.string2ngram(corpus, 1)+n.string2ngram(corpus, 2)+n.string2ngram(corpus, 3)
+		tokens.sort()
+
+		if self.type =="senticnet":
+			tokenRs =[(token, rs[1]) for token, rs in (
+				(token, self.fetchScore(token, tag =scoreType))
+			           for token in tokens if rs[0]
+			)]
+			rs.append(toeknRs)
+			rs[0] =True
+
+		elif self.type =="sentiwordnet":
+			pass
+			#self.fetchScore(token, n.posTagger([token, ]))
+
+		return rs
