@@ -1,5 +1,5 @@
 import os
-from errorlogLib import writeLogL
+from libs.errorlogLib import writeLogL
 
 def fileRead(path):
 	rs =[False,]
