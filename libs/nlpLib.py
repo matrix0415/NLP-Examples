@@ -308,9 +308,14 @@ class sentimentScoreLib(object):
 	# type =senticnet -->sentimentScoreLib(type ="senticnet", rdfPath =FILEPATH, tags =["polarity",], nltkPath ="PATH")
 	# type =sentiwordnet -->sentimentScoreLib(type ="sentiwordnet", nltkPath ="PATH", hierarchy=1)
 	def __init__(self, type ="", **kwargs):
+		from libs.nlpLib import nltkL
+
 		rs =[False, ]
 		self.initRs =False
 		self.type =type.lower()
+
+		if 'nltkPath' in kwargs: self.nltk =nltkL(kwargs['nltkPath'])
+		else: self.nltk =nltkL()
 
 		try:
 			if self.type.lower() =="senticnet":
@@ -327,11 +332,8 @@ class sentimentScoreLib(object):
 
 				self.swn =swn
 
-				if 'hierarchy' in kwargs:
-					self.hierarchy =kwargs['hierarchy']
-
-				else:
-					self.hierarchy =1
+				if 'hierarchy' in kwargs: self.hierarchy =kwargs['hierarchy']
+				else: self.hierarchy =1
 
 				rs[0] =True
 
@@ -349,11 +351,6 @@ class sentimentScoreLib(object):
 			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.init-Exception", e))
 
 		self.initRs =rs
-
-
-	def setNLTK(self, nltkPath):
-		from libs.nlpLib import nltkL
-		self.nltk =nltkL(nltkPath)
 
 
 	# senticnet -->fetchScore(token, tag)
