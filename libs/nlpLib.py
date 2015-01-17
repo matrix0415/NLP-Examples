@@ -255,15 +255,23 @@ class nltkL(object):
 			rs[0] =True
 
 		return rs
+
+
+	def stopwordsDel(self, tokens, stopwords):
+		return [i for i in tokens if i not in stopwords]
+
 		
+	def token2ngram(self, tokens, n, **kwargs):
+		rs =[" ".join(tokens[i:i+n]) for i in range(0,len(tokens)-n-1)]
+		if 'stopwordList' in kwargs: rs =self.stopwordsDel(rs, kwargs['stopwordList'])
+
+		return rs
+
 		
-	def token2ngram(self, tokens, n):
-		return [tokens[i:i+n] for i in range(0,len(tokens)-n-1)]	
-		
-		
-	def string2ngram(self, string, n):
+	def string2ngram(self, string, n, **kwargs):
 		tokens =self.englishTokenizer(string)
-		return self.token2ngram(tokens, n)
+		return self.token2ngram(tokens, n, **kwargs)
+
 
 
 
@@ -297,7 +305,7 @@ class sentimentScoreLib(object):
 		return rs
 
 
-	# type =senticnet -->sentimentScoreLib(type ="senticnet", rdfPath =__FILEPATH__, tags =["polarity", ...])
+	# type =senticnet -->sentimentScoreLib(type ="senticnet", rdfPath =FILEPATH, tags =["polarity",], nltkPath ="PATH")
 	# type =sentiwordnet -->sentimentScoreLib(type ="sentiwordnet", nltkPath ="PATH")
 	def __init__(self, type ="", **kwargs):
 		rs =[False, ]
@@ -315,12 +323,10 @@ class sentimentScoreLib(object):
 					rs.append(localRs[1])
 
 			elif self.type.lower() =="sentiwordnet":
-				from libs.nlpLib import nltkL
 				from nltk.corpus import sentiwordnet as swn
 
 				self.swn =swn
 				self.hierarchy =kwargs['hierarchy']
-				self.nltk =nltkL(kwargs['nltkPath'])
 				rs[0] =True
 
 			else:
@@ -338,6 +344,11 @@ class sentimentScoreLib(object):
 
 		self.initRs =rs
 
+
+	def setNLTK(self, nltkPath):
+		from libs.nlpLib import nltkL
+
+		self.nltk =nltkL(nltkPath)
 
 
 	# senticnet -->fetchScore(token, tag)
@@ -389,20 +400,24 @@ class sentimentScoreLib(object):
 	def corpusWordsSentiment(self, corpus ="", scoreType =""):
 		rs =[False]
 
-		n =self.nltk
-		tokens =n.string2ngram(corpus, 1)+n.string2ngram(corpus, 2)+n.string2ngram(corpus, 3)
-		tokens.sort()
+		try:
+			n =self.nltk
+			tokens =n.string2ngram(corpus, 1)+n.string2ngram(corpus, 2)+n.string2ngram(corpus, 3)
+			tokens.sort()
 
-		if self.type =="senticnet":
-			tokenRs =[(token, rs[1]) for token, rs in (
-				(token, self.fetchScore(token, tag =scoreType))
-			           for token in tokens if rs[0]
-			)]
-			rs.append(toeknRs)
-			rs[0] =True
+			if self.type =="senticnet":
+				tokenRs =[(token, rs[1]) for token, rs in (
+					(token, self.fetchScore(token, tag =scoreType))
+				           for token in tokens if rs[0]
+				)]
+				rs.append(tokenRs)
+				rs[0] =True
 
-		elif self.type =="sentiwordnet":
-			pass
-			#self.fetchScore(token, n.posTagger([token, ]))
+			elif self.type =="sentiwordnet":
+				pass
+				#self.fetchScore(token, n.posTagger([token, ]))
+
+		except Exception as e:
+			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.corpusWordsSentiment", e))
 
 		return rs
