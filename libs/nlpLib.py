@@ -413,7 +413,7 @@ class sentimentScoreLib(object):
 
 		try:
 			n =self.nltk
-			if not ngram: ngram =(1, 2)
+			if not ngram: ngram =(1, 3)
 			for i in range(ngram[0], ngram[1]+1): tokens +=n.string2ngram(corpus, i)
 			tokens.sort()
 

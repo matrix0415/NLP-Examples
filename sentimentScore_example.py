@@ -18,7 +18,7 @@ sentiwordnetObj =sentiscore(type="sentiwordnet")
 senticnetObj.setNLTK("libs/nltk_data/")
 sentiwordnetObj.setNLTK("libs/nltk_data/")
 
-rs =senticnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity", ngram=(1, 4))
+rs =senticnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
 print(rs)
 
 #corpusWordsSentiment
