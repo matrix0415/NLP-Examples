@@ -65,9 +65,13 @@ class nltkL(object):
 
 	def englishWordnet(self, string):
 		from nltk.corpus import wordnet
-		
 		return wordnet.synsets(string)
-	
+
+
+	def wordnetLemmas(self, string):
+		from nltk.corpus import wordnet
+		return wordnet.lemmas(string)
+
 	
 	def posTagger(self, stringList):
 		from nltk.tag import pos_tag as pos
@@ -354,7 +358,7 @@ class sentimentScoreLib(object):
 
 
 	# senticnet -->fetchScore(token, tag)
-	# sentiwordnet -->fetchScore(token, pos, hierarchy, scoreType)
+	# sentiwordnet -->fetchScore(token, pos, scoreType)
 	def fetchScore(self, token, **kwargs):
 		rs =[False,]
 
@@ -365,16 +369,25 @@ class sentimentScoreLib(object):
 						tokenIndex =self.senticnet[0].index(token)
 						score =self.senticnet[self.tags.index(kwargs['tag'])][tokenIndex]
 
-					else:
-						score =0
+					else: score =0
 
 					rs.append(float(score))
 					rs[0] =True
 
 				elif self.type =="sentiwordnet":
-					formatString ="%s.%s.%02d"%(token, kwargs['pos'][0].lower(), self.hierarchy)
-					swnObj =self.swn.senti_synset(formatString)
+					swnObj =self.swn.senti_synset(token)
+					'''
+					Still have some problem with SentiWordNet!!!!!! 2015/01/18
+					try:
+						print(token)
+						tm =self.nltk.wordnetLemmas(token)[0]
+						print(tm.name)
+						swnObj =self.swn.senti_synset(tm.name)
 
+					except Exception as e:
+						print(e)
+					print(swnObj.pos_score())
+					'''
 					if kwargs['scoreType'] =="pos":
 						rs.append(swnObj.pos_score())
 						rs[0] =True
@@ -385,6 +398,10 @@ class sentimentScoreLib(object):
 
 					elif kwargs['scoreType'] =="obj":
 						rs.append(swnObj.obj_score())
+						rs[0] =True
+
+					elif kwargs['scoreType'] =="polarity":
+						rs.append(swnObj.pos_score()-swnObj.neg_score())
 						rs[0] =True
 
 					else:
@@ -403,8 +420,8 @@ class sentimentScoreLib(object):
 
 
 	# senticnet -->fetchScore(token, tags)
-	# sentiwordnet -->fetchScore(token, pos, hierarchy, scoreType)
-	def corpusWordsSentiment(self, corpus ="", scoreType ="", ngram =()):
+	# sentiwordnet -->fetchScore(token, pos, scoreType)
+	def corpusWordsSentiment(self, corpus ="", scoreType ="", ngram =(), hierarchy =1):
 		rs =[False]
 		tokens =[]
 
@@ -416,13 +433,15 @@ class sentimentScoreLib(object):
 
 			if self.type =="senticnet":
 				tokenRs =[(token, self.fetchScore(token, tag =scoreType)) for token in tokens]
-				tokenRs =[(token, tmpRs[1]) for token, tmpRs in tokenRs if tmpRs[0]]
-				rs.append(tokenRs)
-				rs[0] =True
 
 			elif self.type =="sentiwordnet":
-				pass
-				#self.fetchScore(token, n.posTagger([token, ]))
+				tokenRs =[(
+					token, self.fetchScore(token, pos =n.posTagger([token, ]), scoreType= scoreType)
+				) for token in tokens]
+
+			tokenRs =[(token, tmpRs[1]) for token, tmpRs in tokenRs if tmpRs[0]]
+			rs.append(tokenRs)
+			rs[0] =True
 
 		except Exception as e:
 			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.corpusWordsSentiment", e))
