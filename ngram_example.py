@@ -9,21 +9,24 @@ from libs.nlpLib import nltkL
 nltk =nltkL("libs/nltk_data/")  # folder "nltk_data" location, if default, just give it an empty string.
 
 k ="""Computational Science seeks to explain the complex world we live in using technological simulations."""
-
-result =nltk.string2ngram(string =k, n =1)    # n =n_gram
+stopword =["to", "the", "in", "we"]           # stopword is an option condition that you can choice.
 
 print("Unigram------------------------")
-print(result)                                 # return list objects with list inside(depend on ngram).
+result =nltk.string2ngram(string =k, n =1)                          # n =n_gram
+print(result)                                                       # return list objects with list inside(depend on ngram).
 
-result =nltk.string2ngram(string =k, n =2)    # n =n_gram
+print("Unigram Without stopword-------")
+result =[i for i in result if i not in stopword]
+print(result)
 
 print("Bigram------------------------")
-print(result)
-
-result =nltk.string2ngram(string =k, n =3)    # n =n_gram
+result =nltk.string2ngram(string =k, n =2)                          # n =n_gram
+print(result)                                                       # return list objects with list inside(depend on ngram).
+print()
 
 print("Trigram------------------------")
-print(result)
+result =nltk.string2ngram(string =k, n =3)                          # n =n_gram
+print(result)                                                       # return list objects with list inside(depend on ngram).
 
 '''
 
