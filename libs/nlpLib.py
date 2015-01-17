@@ -278,7 +278,7 @@ class nltkL(object):
 class sentimentScoreLib(object):
 	def senticnetInit(self, senticnetPath ="", tags =[]):
 		from bs4 import BeautifulSoup
-		from fileLib import fileRead as fr
+		from libs.fileLib import fileRead as fr
 
 		rs =[False, ]
 
@@ -306,7 +306,7 @@ class sentimentScoreLib(object):
 
 
 	# type =senticnet -->sentimentScoreLib(type ="senticnet", rdfPath =FILEPATH, tags =["polarity",], nltkPath ="PATH")
-	# type =sentiwordnet -->sentimentScoreLib(type ="sentiwordnet", nltkPath ="PATH")
+	# type =sentiwordnet -->sentimentScoreLib(type ="sentiwordnet", nltkPath ="PATH", hierarchy=1)
 	def __init__(self, type ="", **kwargs):
 		rs =[False, ]
 		self.initRs =False
@@ -326,7 +326,13 @@ class sentimentScoreLib(object):
 				from nltk.corpus import sentiwordnet as swn
 
 				self.swn =swn
-				self.hierarchy =kwargs['hierarchy']
+
+				if 'hierarchy' in kwargs:
+					self.hierarchy =kwargs['hierarchy']
+
+				else:
+					self.hierarchy =1
+
 				rs[0] =True
 
 			else:
@@ -336,18 +342,17 @@ class sentimentScoreLib(object):
 
 		except NameError as e:
 			rs[0] =False
-			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.init", e))
+			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.init-NameError", e))
 
 		except Exception as e:
 			rs[0] =False
-			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.init", e))
+			rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.init-Exception", e))
 
 		self.initRs =rs
 
 
 	def setNLTK(self, nltkPath):
 		from libs.nlpLib import nltkL
-
 		self.nltk =nltkL(nltkPath)
 
 
@@ -359,8 +364,13 @@ class sentimentScoreLib(object):
 		try:
 			if self.initRs[0]:
 				if self.type =="senticnet":
-					tokenIndex =self.senticnet[0].index(token)
-					score =self.senticnet[self.tags.index(kwargs['tag'])][tokenIndex]
+					if token in self.senticnet[0]:
+						tokenIndex =self.senticnet[0].index(token)
+						score =self.senticnet[self.tags.index(kwargs['tag'])][tokenIndex]
+
+					else:
+						score =0
+
 					rs.append(float(score))
 					rs[0] =True
 
@@ -397,19 +407,19 @@ class sentimentScoreLib(object):
 
 	# senticnet -->fetchScore(token, tags)
 	# sentiwordnet -->fetchScore(token, pos, hierarchy, scoreType)
-	def corpusWordsSentiment(self, corpus ="", scoreType =""):
+	def corpusWordsSentiment(self, corpus ="", scoreType ="", ngram =()):
 		rs =[False]
+		tokens =[]
 
 		try:
 			n =self.nltk
-			tokens =n.string2ngram(corpus, 1)+n.string2ngram(corpus, 2)+n.string2ngram(corpus, 3)
+			if not ngram: ngram =(1, 2)
+			for i in range(ngram[0], ngram[1]+1): tokens +=n.string2ngram(corpus, i)
 			tokens.sort()
 
 			if self.type =="senticnet":
-				tokenRs =[(token, rs[1]) for token, rs in (
-					(token, self.fetchScore(token, tag =scoreType))
-				           for token in tokens if rs[0]
-				)]
+				tokenRs =[(token, self.fetchScore(token, tag =scoreType)) for token in tokens]
+				tokenRs =[(token, rs[1]) for token, rs in tokenRs if rs[0]]
 				rs.append(tokenRs)
 				rs[0] =True
 
