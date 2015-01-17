@@ -419,7 +419,7 @@ class sentimentScoreLib(object):
 
 			if self.type =="senticnet":
 				tokenRs =[(token, self.fetchScore(token, tag =scoreType)) for token in tokens]
-				tokenRs =[(token, rs[1]) for token, rs in tokenRs if rs[0]]
+				tokenRs =[(token, tmpRs[1]) for token, tmpRs in tokenRs if tmpRs[0]]
 				rs.append(tokenRs)
 				rs[0] =True
 
