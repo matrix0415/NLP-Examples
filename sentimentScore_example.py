@@ -12,13 +12,13 @@ corpus ="""how an epidemic will spread or the probability of individuals in soci
 		a little good of this hotel a lot of money absent abstract acceptance access internet
 		"""
 
-#senticnetObj =sentiscore(type="senticnet", rdfPath="libs/nltk_data/senticnet3.rdf.xml", tags=['polarity'], nltkPath="libs/nltk_data/")
-#rs =senticnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
-#print(rs)
-
-sentiwordnetObj =sentiscore(type="sentiwordnet", nltkPath="libs/nltk_data/")
-rs =sentiwordnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
+senticnetObj =sentiscore(type="senticnet", rdfPath="libs/nltk_data/senticnet3.rdf.xml", tags=['polarity'], nltkPath="libs/nltk_data/")
+rs =senticnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
 print(rs)
+
+#sentiwordnetObj =sentiscore(type="sentiwordnet", nltkPath="libs/nltk_data/")
+#rs =sentiwordnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
+#print(rs)
 
 #corpusWordsSentiment
 
