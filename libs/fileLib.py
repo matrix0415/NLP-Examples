@@ -1,4 +1,3 @@
-import os
 from libs.errorlogLib import writeLogL
 
 def fileRead(path):
@@ -14,8 +13,39 @@ def fileRead(path):
 		
 	return rs
 	
-	
+
+# fileReadLine(path, line=(1,10)/count=1000, ), return List
+def fileReadLine(path, lineSplit ="\n", **kwargs):
+	rs =[False,]
+	frs =fileRead(path)
+
+	if frs[0]:
+		try:
+			tmp =frs[1].split(lineSplit)
+
+			if 'line' in kwargs:
+				if kwargs['line'][1] >len(tmp): tmp =tmp[int(kwargs['line'][0]):len(tmp)]
+				else: tmp =tmp[int(kwargs['line'][0]):int(kwargs['line'][1])]
+
+			elif 'count' in kwargs:
+				kwargs['count'] =int(kwargs['count'])
+				if kwargs['count'] >len(tmp): tmp =tmp[:len(tmp)]
+				else: tmp =tmp[:kwargs['count']]
+
+			rs.append(tmp)
+			rs[0] =True
+
+		except Exception as e:
+			rs.append(writeLogL("libs.fileReadLine", e))
+	else:
+		rs.append(frs[1])
+
+	return rs
+
+
 def fileWrite(path, content):
+	import os
+
 	rs =[False, ""]
 	
 	try:		
