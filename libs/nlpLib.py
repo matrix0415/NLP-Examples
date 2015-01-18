@@ -7,7 +7,7 @@ def fetchUrl(fakeUrl):
 	urlList =[]
 	regex = re.compile("<<([^>]+)~([^>]+)/([^>]+)>>")
 	parametersList =regex.findall(fakeUrl)
-	
+
 	if len(parametersList) is not 0:
 		for para in parametersList:
 			para =[int(i) for i in para]
