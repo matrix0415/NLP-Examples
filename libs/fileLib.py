@@ -14,7 +14,7 @@ def fileRead(path):
 	return rs
 
 
-# fileReadLine(path, line=(1,10)/count=1000, ), return List
+# fileReadLine(path, line=(1,10)/count=1000/random=1000, ), return List
 def fileReadLine(path, lineSplit ="\n", **kwargs):
 	rs =[False,]
 	frs =fileRead(path)
@@ -31,6 +31,12 @@ def fileReadLine(path, lineSplit ="\n", **kwargs):
 				kwargs['count'] =int(kwargs['count'])
 				if kwargs['count'] >len(tmp): tmp =tmp[:len(tmp)]
 				else: tmp =tmp[:kwargs['count']]
+
+			elif 'random' in kwargs:
+				from random import sample
+
+				kwargs['random'] =int(kwargs['random'])
+				tmp =[tmp[k] for k in sample([i for i in range(len(tmp))], kwargs['random'])]
 
 			rs.append(tmp)
 			rs[0] =True
@@ -53,11 +59,11 @@ def fileWrite(path, content):
 	import os
 
 	rs =[False, ""]
-	
+
 	try:		
 		if not os.path.exists(os.path.dirname(path)):
 			os.makedirs(os.path.dirname(path))
-			
+
 		with open(path, 'w') as myFile:
 			myFile.write(str(content))
 		rs[0] =True
@@ -70,7 +76,7 @@ def fileWrite(path, content):
 
 def fileWriteLine(path, contentList, listJoin ="\n"):
 	content =listJoin.join([str(i) for i in contentList])
-	return fileWrite(path= path, content= contentList)
+	return fileWrite(path= path, content= content)
 
 
 def fileWriteDict(path, contentDic):
