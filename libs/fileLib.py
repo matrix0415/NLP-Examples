@@ -14,8 +14,8 @@ def fileRead(path):
 	return rs
 
 
-# fileReadLine(path, line=(1,10)/count=1000/random=1000, ), return List
-def fileReadLine(path, lineSplit ="\n", **kwargs):
+# fileReadLine(path, lineSplit ="\n", line=(1,10)/count=1000/random=1000, exceptLine =[10, ]), return List
+def fileReadLine(path, lineSplit ="\n", line =(), count =0, random =0, exceptLine =[]):
 	rs =[False,]
 	frs =fileRead(path)
 
@@ -23,20 +23,23 @@ def fileReadLine(path, lineSplit ="\n", **kwargs):
 		try:
 			tmp =frs[1].split(lineSplit)
 
-			if 'line' in kwargs:
-				if kwargs['line'][1] >len(tmp): tmp =tmp[int(kwargs['line'][0]):len(tmp)]
-				else: tmp =tmp[int(kwargs['line'][0]):int(kwargs['line'][1])]
+			if exceptLine is not []:  # except line number
+				[tmp.pop(exceptLine) for exceptLine in exceptLine]
 
-			elif 'count' in kwargs:
-				kwargs['count'] =int(kwargs['count'])
-				if kwargs['count'] >len(tmp): tmp =tmp[:len(tmp)]
-				else: tmp =tmp[:kwargs['count']]
+			if line is not ():
+				if line[1] >len(tmp): tmp =tmp[int(line[0]):len(tmp)]
+				else: tmp =tmp[int(line[0]):int(line[1])]
 
-			elif 'random' in kwargs:
+			elif count is not 0:
+				count =int(count)
+				if count >len(tmp): tmp =tmp[:len(tmp)]
+				else: tmp =tmp[:count]
+
+			elif random is not 0:
 				from random import sample
 
-				kwargs['random'] =int(kwargs['random'])
-				tmp =[tmp[k] for k in sample([i for i in range(len(tmp))], kwargs['random'])]
+				random =int(random)
+				tmp =[tmp[k] for k in sample([i for i in range(len(tmp))], random)]
 
 			rs.append(tmp)
 			rs[0] =True
