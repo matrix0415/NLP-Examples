@@ -24,7 +24,8 @@ def fileReadLine(path, lineSplit ="\n", line =(), count =0, random =0, exceptLin
 			tmp =frs[1].split(lineSplit)
 
 			if exceptLine is not []:  # except line number
-				[tmp.pop(exceptLine) for exceptLine in exceptLine]
+				exceptLine.reverse()
+				[tmp.pop(exceptLine) for exceptLine in exceptLine if len(tmp) >= exceptLine]
 
 			if line is not ():
 				if line[1] >len(tmp): tmp =tmp[int(line[0]):len(tmp)]
