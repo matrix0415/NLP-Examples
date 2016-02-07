@@ -4,23 +4,39 @@ __author__ = 'Matrix'
 # Script passed in py2 & py3 with Ubuntu 14.04 env.
 # Prerequirement: pip install beautifulsoup4 nltk
 
-from libs.nlpLib import sentimentScoreLib as sentiscore
+def wordSentiment(words):
+	from libs.nlpLib import sentimentScoreLib as sentiscore
 
-# type =senticnet -->sentimentScoreLib(type ="senticnet", rdfPath =__FILEPATH__, tags =["polarity", ...])
-# type =sentiwordnet -->sentimentScoreLib(type ="sentiwordnet", nltkPath ="PATH")
-corpus ="""how an epidemic will spread or the probability of individuals in society becoming addicted to drugs
-		a little good of this hotel a lot of money absent abstract acceptance access internet
-		"""
+	# type =senticnet -->sentimentScoreLib(type ="senticnet", rdfPath =__FILEPATH__, tags =["polarity", ...])
+	# type =sentiwordnet -->sentimentScoreLib(type ="sentiwordnet", nltkPath ="PATH")
 
-senticnetObj =sentiscore(type="senticnet", rdfPath="libs/nltk_data/senticnet3.rdf.xml", tags=['polarity'], nltkPath="libs/nltk_data/")
-rs =senticnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
-print(rs)
+	senticnetObj =sentiscore(type="senticnet", rdfPath="libs/senticnet3.rdf.xml", tags=['polarity'])#, nltkPath="libs/nltk_data/")
+	rs =senticnetObj.corpusWordsSentiment(corpus =words, scoreType="polarity")
 
-#sentiwordnetObj =sentiscore(type="sentiwordnet", nltkPath="libs/nltk_data/")
-#rs =sentiwordnetObj.corpusWordsSentiment(corpus =corpus, scoreType="polarity")
-#print(rs)
+	#sentiwordnetObj =sentiscore(type="sentiwordnet")#, nltkPath="libs/nltk_data/")
+	#rs =sentiwordnetObj.corpusWordsSentiment(corpus =words, scoreType="polarity")
 
-#corpusWordsSentiment
+	return rs
+
+
+def sentenceSentiment(sentence):
+	from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+	sid = SentimentIntensityAnalyzer()
+	ss = sid.polarity_scores(sentence)
+
+	return ss
+
+
+if __name__ == "__main__":
+	words ="""how an epidemic will spread or the probability of individuals in society becoming addicted to drugs
+			a little good of this hotel a lot of money absent abstract acceptance access internet"""
+
+	wordRs =wordSentiment(words)
+	sentenceRs =sentenceSentiment(words)
+
+	print(wordRs)
+	print(sentenceRs)
 
 
 '''
