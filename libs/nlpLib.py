@@ -293,7 +293,7 @@ class sentimentScoreLib(object):
 			sentic =fr(senticnetPath)
 
 			if sentic[0]:
-				soup =BeautifulSoup(sentic[1])
+				soup =BeautifulSoup(sentic[1], "html5lib")
 
 				for tag in self.tags:
 					self.senticnet.append([i.get_text() for i in soup.find_all(tag)])
@@ -375,39 +375,36 @@ class sentimentScoreLib(object):
 					rs[0] =True
 
 				elif self.type =="sentiwordnet":
-					swnObj =self.swn.senti_synset(token)
-					'''
-					Still have some problem with SentiWordNet!!!!!! 2015/01/18
-					try:
-						print(token)
-						tm =self.nltk.wordnetLemmas(token)[0]
-						print(tm.name)
-						swnObj =self.swn.senti_synset(tm.name)
+					tokensplit =token.split('.')
+					tokensplitlen =len(tokensplit)
 
-					except Exception as e:
-						print(e)
-					print(swnObj.pos_score())
-					'''
-					if kwargs['scoreType'] =="pos":
-						rs.append(swnObj.pos_score())
-						rs[0] =True
+					if tokensplitlen >=2:     # word, pos tag and priority, ex: happy.a.01
+						if tokensplitlen ==2:
+							tokensplit.append('01')
+							token =".".join(tokensplit)
 
-					elif kwargs['scoreType'] =="neg":
-						rs.append(swnObj.neg_score())
-						rs[0] =True
+						swnObj =self.swn.senti_synset(token)
 
-					elif kwargs['scoreType'] =="obj":
-						rs.append(swnObj.obj_score())
-						rs[0] =True
+					elif tokensplitlen ==2:   # word and pos tag, ex: happy.a
+						swnObj =[i for i in self.swn.senti_synset()]
 
-					elif kwargs['scoreType'] =="polarity":
-						rs.append(swnObj.pos_score()-swnObj.neg_score())
-						rs[0] =True
+					elif tokensplitlen ==1:   # only word, ex: happy
+						swnObj =[i for i in self.swn.senti_synsets(tokensplit[0])]
+						appendObj =swnObj
 
-					else:
-						rs.append(
-							writeLogL("libs.nlpLib.sentimentScoreLib.fetchScore", "None scoreType: only pos& neg& obj")
-						)
+					if tokensplitlen >1:
+						if 'scoreType' not in kwargs: appendObj =swnObj.pos_score()-swnObj.neg_score()
+						elif kwargs['scoreType'] =="pos": appendObj =swnObj.pos_score()
+						elif kwargs['scoreType'] =="neg": appendObj =swnObj.neg_score()
+						elif kwargs['scoreType'] =="obj": appendObj =swnObj.obj_score()
+
+					rs.append(appendObj)
+					rs[0] =True
+
+				else:
+					rs.append(
+						writeLogL("libs.nlpLib.sentimentScoreLib.fetchScore", "None scoreType: only pos& neg& obj")
+					)
 
 			else:
 				rs.append(writeLogL("libs.nlpLib.sentimentScoreLib.fetchScore", self.initRs[1]))
@@ -438,8 +435,8 @@ class sentimentScoreLib(object):
 				tokenRs =[(
 					token, self.fetchScore(token, pos =n.posTagger([token, ]), scoreType= scoreType)
 				) for token in tokens]
-
-			tokenRs =[(token, tmpRs[1]) for token, tmpRs in tokenRs if tmpRs[0]]
+			print(tokenRs)
+			tokenRs =[(token, tmpRs[1]) for token, tmpRs in tokenRs]
 			rs.append(tokenRs)
 			rs[0] =True
 
